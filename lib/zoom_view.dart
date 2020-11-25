@@ -97,6 +97,7 @@ class ZoomViewController {
     var optionMap = new Map<String, String>();
     optionMap.putIfAbsent("userId", () => options.userId);
     optionMap.putIfAbsent("meetingId", () => options.meetingId);
+    optionMap.putIfAbsent("emailAddress", () => options.emailAddress);
     optionMap.putIfAbsent("meetingPassword", () => options.meetingPassword);
     optionMap.putIfAbsent("disableDialIn", () => options.disableDialIn);
     optionMap.putIfAbsent("disableDrive", () => options.disableDrive);
@@ -104,6 +105,7 @@ class ZoomViewController {
     optionMap.putIfAbsent("disableShare", () => options.disableShare);
     optionMap.putIfAbsent("noDisconnectAudio", () => options.noDisconnectAudio);
     optionMap.putIfAbsent("noAudio", () => options.noAudio);
+    optionMap.putIfAbsent("noWebinarRegisterDialog", () => options.noWebinarRegisterDialog);
 
     return _methodChannel.invokeMethod('join', optionMap);
   }

@@ -7,6 +7,7 @@ import android.widget.TextView;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.List;
 
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
@@ -24,10 +25,16 @@ import us.zoom.sdk.ZoomSDK;
 import us.zoom.sdk.ZoomSDKAuthenticationListener;
 import us.zoom.sdk.ZoomSDKInitParams;
 import us.zoom.sdk.ZoomSDKInitializeListener;
+import us.zoom.sdk.InMeetingEventHandler;
+import us.zoom.sdk.InMeetingChatMessage;
+import us.zoom.sdk.InMeetingServiceListener;
+import us.zoom.sdk.InMeetingService;
+import us.zoom.sdk.InMeetingAudioController.MobileRTCMicrophoneError;
 
 public class ZoomView  implements PlatformView,
         MethodChannel.MethodCallHandler,
-        ZoomSDKAuthenticationListener {
+        ZoomSDKAuthenticationListener,
+        InMeetingServiceListener{
     private final TextView textView;
     private final MethodChannel methodChannel;
     private final Context context;
@@ -35,12 +42,15 @@ public class ZoomView  implements PlatformView,
 
     ZoomView(Context context, BinaryMessenger messenger, int id) {
         textView = new TextView(context);
+        textView.setAlpha(0f);
         this.context = context;
 
         methodChannel = new MethodChannel(messenger, "com.decodedhealth/flutter_zoom_plugin");
         methodChannel.setMethodCallHandler(this);
 
         meetingStatusChannel = new EventChannel(messenger, "com.decodedhealth/zoom_event_stream");
+
+
     }
 
     @Override
@@ -74,6 +84,8 @@ public class ZoomView  implements PlatformView,
         Map<String, String> options = methodCall.arguments();
 
         ZoomSDK zoomSDK = ZoomSDK.getInstance();
+
+        //ZoomSDK.getInstance().getInMeetingService().addListener(this);
 
         if(zoomSDK.isInitialized()) {
             List<Integer> response = Arrays.asList(0, 0);
@@ -118,6 +130,14 @@ public class ZoomView  implements PlatformView,
 
         Map<String, String> options = methodCall.arguments();
 
+        String userId = options.get("userId");
+        if(userId == null || userId.trim().isEmpty()) {
+            /* do your stuffs here */
+            userId = "Anonymous";
+        }
+        String nameAndEmailAddress = userId+",,,"+options.get("emailAddress");
+        textView.setText(nameAndEmailAddress);
+        //System.out.println(nameAndEmailAddress);
         ZoomSDK zoomSDK = ZoomSDK.getInstance();
 
         if(!zoomSDK.isInitialized()) {
@@ -128,6 +148,13 @@ public class ZoomView  implements PlatformView,
 
         final MeetingService meetingService = zoomSDK.getMeetingService();
 
+
+//        name = options.get("userId");
+//        email = options.get("emailAddress");
+
+        InMeetingService mInMeetingService = ZoomSDK.getInstance().getInMeetingService();
+        mInMeetingService.addListener(this);
+
         JoinMeetingOptions opts = new JoinMeetingOptions();
         opts.no_invite = parseBoolean(options, "disableInvite", false);
         opts.no_share = parseBoolean(options, "disableShare", false);
@@ -135,6 +162,7 @@ public class ZoomView  implements PlatformView,
         opts.no_dial_in_via_phone = parseBoolean(options, "disableDialIn", false);
         opts.no_disconnect_audio = parseBoolean(options, "noDisconnectAudio", false);
         opts.no_audio = parseBoolean(options, "noAudio", false);
+        opts.no_webinar_register_dialog = parseBoolean(options, "noWebinarRegisterDialog", true);;
 
         JoinMeetingParams params = new JoinMeetingParams();
 
@@ -231,4 +259,157 @@ public class ZoomView  implements PlatformView,
     public void onZoomIdentityExpired() {
 
     }
+
+    @Override
+    public void onJoinWebinarNeedUserNameAndEmail(InMeetingEventHandler inMeetingEventHandler) {
+        String name = textView.getText().toString();
+        String[] array1 = name.split(",,,");
+        inMeetingEventHandler.setRegisterWebinarInfo(array1[0],array1[1],false);
+    }
+
+    @Override
+    public void onSinkAllowAttendeeChatNotification(int privilege) {
+
+    }
+
+    @Override
+    public void onSinkAttendeeChatPriviledgeChanged(int privilege){
+
+    }
+
+    @Override
+    public void onMeetingActiveVideo(long userId){
+
+    }
+
+    @Override
+    public void onFreeMeetingReminder(boolean isHost, boolean canUpgrade, boolean isFirstGift){
+
+    }
+
+    @Override
+    public void onSilentModeChanged(boolean a){
+
+    }
+
+    @Override
+    public void onChatMessageReceived(InMeetingChatMessage inMeetingChatMessage){
+
+    }
+
+    @Override
+    public void onMeetingSecureKeyNotification(byte[] asd){
+
+    }
+
+    @Override
+    public void onLowOrRaiseHandStatusChanged(long a,boolean b){
+
+    }
+
+    @Override
+    public void onMyAudioSourceTypeChanged(int a){
+
+    }
+
+    @Override
+    public void onUserAudioTypeChanged(long a){
+
+    }
+
+    @Override
+    public void onHostAskStartVideo(long a){
+
+    }
+
+    @Override
+    public void onHostAskUnMute(long a ){
+
+    }
+
+    @Override
+    public void onUserAudioStatusChanged(long a){
+
+    }
+
+    @Override
+    public void onMicrophoneStatusError(MobileRTCMicrophoneError a){
+
+    }
+
+    @Override
+    public void onUserNetworkQualityChanged(long a){
+
+    }
+
+    @Override
+    public void onUserVideoStatusChanged(long a){
+
+    }
+
+    @Override
+    public void onSpotlightVideoChanged(boolean a){
+
+    }
+
+    @Override
+    public void onActiveSpeakerVideoUserChanged(long a){
+
+    }
+
+    @Override
+    public void onActiveVideoUserChanged(long a){
+
+    }
+
+    @Override
+    public void onMeetingCoHostChanged(long a){
+
+    }
+
+    @Override
+    public void onMeetingHostChanged(long a){
+
+    }
+
+    @Override
+    public void onMeetingUserUpdated(long a){
+
+    }
+
+    @Override
+    public void onMeetingUserLeave(List<Long> a){
+
+    }
+
+    @Override
+    public void onMeetingUserJoin(List<Long> a){
+
+    }
+
+    @Override
+    public void onMeetingLeaveComplete(long a){
+
+    }
+
+    @Override
+    public void onMeetingFail(int a ,int b){
+
+    }
+
+    @Override
+    public void onMeetingNeedColseOtherMeeting(InMeetingEventHandler a){
+
+    }
+
+    @Override
+    public void onWebinarNeedRegister(){
+
+    }
+
+    @Override
+    public void onMeetingNeedPasswordOrDisplayName(boolean a ,boolean b,InMeetingEventHandler c){
+
+    }
+
 }

@@ -18,6 +18,7 @@ class ZoomMeetingOptions {
 
   String userId;
   String displayName;
+  String emailAddress;
   String meetingId;
   String meetingPassword;
   String zoomToken;
@@ -28,10 +29,12 @@ class ZoomMeetingOptions {
   String disableShare;
   String noDisconnectAudio;
   String noAudio;
+  String noWebinarRegisterDialog;
 
   ZoomMeetingOptions({
     this.userId,
     this.displayName,
+    this.emailAddress,
     this.meetingId,
     this.meetingPassword,
     this.zoomToken,
@@ -41,6 +44,7 @@ class ZoomMeetingOptions {
     this.disableInvite,
     this.disableShare,
     this.noDisconnectAudio,
-    this.noAudio
+    this.noAudio,
+    this.noWebinarRegisterDialog
   });
 }
