@@ -14,6 +14,7 @@ import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
+import us.zoom.sdk.FreeMeetingNeedUpgradeType;
 import us.zoom.sdk.JoinMeetingOptions;
 import us.zoom.sdk.JoinMeetingParams;
 import us.zoom.sdk.StartMeetingParamsWithoutLogin;
@@ -203,7 +204,7 @@ public class ZoomView  implements PlatformView,
         params.displayName = options.get("displayName");
         params.meetingNo = options.get("meetingId");
 		params.userType = MeetingService.USER_TYPE_API_USER;
-		params.zoomToken = options.get("zoomToken");
+		params.zoomAccessToken = options.get("zoomToken");
 		params.zoomAccessToken = options.get("zoomAccessToken");
 		
         meetingService.startMeetingWithParams(context, params, opts);
@@ -273,6 +274,11 @@ public class ZoomView  implements PlatformView,
     }
 
     @Override
+    public void onUserNameChanged(long l, String s) {
+
+    }
+
+    @Override
     public void onSinkAttendeeChatPriviledgeChanged(int privilege){
 
     }
@@ -333,6 +339,11 @@ public class ZoomView  implements PlatformView,
     }
 
     @Override
+    public void onUserAudioStatusChanged(long l, AudioStatus audioStatus) {
+
+    }
+
+    @Override
     public void onMicrophoneStatusError(MobileRTCMicrophoneError a){
 
     }
@@ -344,6 +355,11 @@ public class ZoomView  implements PlatformView,
 
     @Override
     public void onUserVideoStatusChanged(long a){
+
+    }
+
+    @Override
+    public void onUserVideoStatusChanged(long l, VideoStatus videoStatus) {
 
     }
 
@@ -411,5 +427,29 @@ public class ZoomView  implements PlatformView,
     public void onMeetingNeedPasswordOrDisplayName(boolean a ,boolean b,InMeetingEventHandler c){
 
     }
+
+    // for zoom v5
+    @Override
+    public void onFreeMeetingUpgradeToProMeeting(){
+
+    }
+
+    @Override
+    public void onFreeMeetingUpgradeToGiftFreeTrialStop(){
+
+    }
+
+    @Override
+    public void onFreeMeetingUpgradeToGiftFreeTrialStart(){
+
+    }
+
+    @Override
+    public void onFreeMeetingNeedToUpgrade(FreeMeetingNeedUpgradeType a, String b){
+
+    }
+
+    // here
+
 
 }
