@@ -143,7 +143,8 @@ public class ZoomView  implements PlatformView,
     private void joinMeeting(MethodCall methodCall, MethodChannel.Result result) {
 
         Map<String, String> options = methodCall.arguments();
-
+        textView.setText("");
+        System.out.println("current textview's text: "+textView.getText().toString());
         String userId = options.get("userId");
         String emailAddress = options.get("emailAddress");
         if(userId == null || userId.trim().isEmpty()) {
@@ -156,9 +157,16 @@ public class ZoomView  implements PlatformView,
         }
 
         String nameAndEmailAddress = userId+",,,"+emailAddress;
-        //String[] array1 = name.split(",,,");
-        textView.setText(nameAndEmailAddress);
-        //System.out.println(nameAndEmailAddress);
+        System.out.println("nameAndEmailAddress: "+nameAndEmailAddress);
+
+        boolean noWebinarRegisterDialog = parseBoolean(options, "noWebinarRegisterDialog", true);
+
+
+        if(noWebinarRegisterDialog){
+            System.out.println("noWebinarRegisterDialog is true");
+            textView.setText(nameAndEmailAddress);
+        }
+
         ZoomSDK zoomSDK = ZoomSDK.getInstance();
 
         if(!zoomSDK.isInitialized()) {
@@ -173,8 +181,12 @@ public class ZoomView  implements PlatformView,
 //        name = options.get("userId");
 //        email = options.get("emailAddress");
 
-        InMeetingService mInMeetingService = ZoomSDK.getInstance().getInMeetingService();
-        mInMeetingService.addListener(this);
+
+
+        if(noWebinarRegisterDialog){
+            InMeetingService mInMeetingService = ZoomSDK.getInstance().getInMeetingService();
+            mInMeetingService.addListener(this);
+        }
 
         JoinMeetingOptions opts = new JoinMeetingOptions();
         opts.no_invite = parseBoolean(options, "disableInvite", false);
@@ -285,7 +297,11 @@ public class ZoomView  implements PlatformView,
     public void onJoinWebinarNeedUserNameAndEmail(InMeetingEventHandler inMeetingEventHandler) {
         String name = textView.getText().toString();
         String[] array1 = name.split(",,,");
-        inMeetingEventHandler.setRegisterWebinarInfo(array1[0],array1[1],false);
+        if(array1.length == 2){
+            inMeetingEventHandler.setRegisterWebinarInfo(array1[0],array1[1],false);
+            textView.setText("");
+        }
+
     }
 
     @Override
