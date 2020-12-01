@@ -112,6 +112,19 @@ public class ZoomView  implements PlatformView,
                     public void onZoomSDKInitializeResult(int errorCode, int internalErrorCode) {
                         List<Integer> response = Arrays.asList(errorCode, internalErrorCode);
 
+
+
+//                        switch (errorCode){
+//                            case ZoomError.ZOOM_ERROR_INVALID_ARGUMENTS:
+//                                System.out.println("Failed to initialize Zoom SDK - Invalid Arguments");
+//                                return;
+//                                break;
+//                            case ZoomError.ZOOM_ERROR_ILLEGAL_APP_KEY_OR_SECRET:
+//                                System.out.println("Failed to initialize Zoom SDK - Illegal App Key or Secret");
+//                                break;
+//                                return;
+//                        }
+
                         if (errorCode != ZoomError.ZOOM_ERROR_SUCCESS) {
                             System.out.println("Failed to initialize Zoom SDK");
                             result.success(response);
@@ -132,11 +145,18 @@ public class ZoomView  implements PlatformView,
         Map<String, String> options = methodCall.arguments();
 
         String userId = options.get("userId");
+        String emailAddress = options.get("emailAddress");
         if(userId == null || userId.trim().isEmpty()) {
             /* do your stuffs here */
             userId = "Anonymous";
         }
-        String nameAndEmailAddress = userId+",,,"+options.get("emailAddress");
+
+        if(emailAddress == null || emailAddress.trim().isEmpty()){
+            emailAddress = "anon@anonymous.com";
+        }
+
+        String nameAndEmailAddress = userId+",,,"+emailAddress;
+        //String[] array1 = name.split(",,,");
         textView.setText(nameAndEmailAddress);
         //System.out.println(nameAndEmailAddress);
         ZoomSDK zoomSDK = ZoomSDK.getInstance();
